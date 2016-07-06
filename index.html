@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<!-- author Serkan Yildiz -->
 <html>
   <head>
     <title>Open iRail Map</title>
@@ -5,12 +7,13 @@
     <script src="assets/js/leaflet.js" charset="utf-8"></script>
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
   </head>
-
   <body>
     <div id="map" style="width: 100%; height: 100%"></div>
 
     <script>
-
+    /**
+    * Initializing leaflet map
+    */
     var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -25,9 +28,10 @@
     layers: [grayscale]
     });
 
-
+    // query log URL
     var query_log = 'http://api.irail.be/logs';
 
+    // getting Json response from iRail api log
     $.getJSON(
       {
         url: query_log,
@@ -38,10 +42,15 @@
             var query = data[log];
             if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null)
             {
+              // information about departureStop & arrivalStop
+                var dep_name = query.query.departureStop.name;
+                var arr_name = query.query.arrivalStop.name;
                 var latFrom = query.query.departureStop.latitude;
                 var longFrom =  query.query.departureStop.longitude;
                 var latTo =  query.query.arrivalStop.latitude;
                 var longTo =  query.query.arrivalStop.longitude;
+
+                // objects with Lat and Long information about departure and arrival
                 var pointFrom = new L.LatLng(latFrom, longFrom);
                 var pointTo = new L.LatLng(latTo, longTo);
 
@@ -55,30 +64,16 @@
                   smoothFactor: 3
                 });
 
-
-
-
-                var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(query.query.departureStop.name);
+                // add 'from' marker to map
+                var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name);
                 fromMarker.addTo(map);
-                var toMarker = new L.marker([latTo,longTo]).bindPopup(query.query.arrivalStop.name);
+
+                // add 'to' marker to map
+                var toMarker = new L.marker([latTo,longTo]).bindPopup(arr_name);
                 toMarker.addTo(map);
 
+                // add polyline to map (line between from - to)
                 polyline.addTo(map);
-
-            		/*var baseLayers = {
-            			"Grayscale": grayscale,
-            			"Streets": streets
-            		};
-
-            		var overlays = {
-            			"Cities": cities
-            		};
-
-            		L.control.layers(baseLayers, overlays).addTo(map);*/
-
-
-
-
             }
           }
         }
