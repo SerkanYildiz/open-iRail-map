@@ -5,6 +5,7 @@
     <title>Open iRail Map</title>
     <link rel="stylesheet" href="assets/css/leaflet.css" media="screen" title="no title" charset="utf-8">
     <script src="assets/js/leaflet.js" charset="utf-8"></script>
+    <script src="assets/js/moment.js" charset="utf-8"></script>
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,800' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="assets/css/style.css" media="screen" title="no title" charset="utf-8">
@@ -79,7 +80,7 @@
                 });
 
                   // add 'from' marker to map
-                  var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name + ' at ' +  dateTime + ' to ' + arr_name);
+                  var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name + ' at ' +  moment(dateTime).format('LLL') + ' to ' + arr_name);
                   fromMarker.addTo(map);
 
                   // add 'to' marker to map
