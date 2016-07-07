@@ -47,7 +47,7 @@
             for(var log in data )
             {
               var query = data[log];
-              if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null && moment(query.querytime).seconds() === moment().seconds()-1)
+              if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null && moment(query.querytime).seconds() === moment().seconds()-2)
               {
                 connections_count++;
 
