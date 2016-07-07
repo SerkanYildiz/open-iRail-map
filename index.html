@@ -36,7 +36,6 @@
 
     var api_response = [];
     var connections_count = 0;
-
     function loadConnections()
     {
       // getting Json response from iRail api log
@@ -48,7 +47,7 @@
             for(var log in data )
             {
               var query = data[log];
-              if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null)
+              if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null && moment(query.querytime).seconds() === moment().seconds()-1)
               {
                 connections_count++;
 
@@ -80,12 +79,12 @@
                 });
 
                   // add 'from' marker to map
-                  var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name + ' at ' +  moment(dateTime).format('LLL') + ' to ' + arr_name);
-                  fromMarker.addTo(map);
+                  //var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name + ' at ' +  moment(dateTime).format('LLL') + ' to ' + arr_name);
+                  //fromMarker.addTo(map);
 
                   // add 'to' marker to map
-                  var toMarker = new L.marker([latTo,longTo]).bindPopup(arr_name);
-                  toMarker.addTo(map);
+                  //var toMarker = new L.marker([latTo,longTo]).bindPopup(arr_name);
+                  //toMarker.addTo(map);
 
                   // add polyline to map (line between from - to)
                   polyline.addTo(map);
@@ -98,8 +97,7 @@
           });
 
     }
-
-    loadConnections();
+    window.setInterval(loadConnections,1000);
 	</script>
   </body>
 </html>
