@@ -6,10 +6,12 @@
     <link rel="stylesheet" href="assets/css/leaflet.css" media="screen" title="no title" charset="utf-8">
     <script src="assets/js/leaflet.js" charset="utf-8"></script>
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="assets/css/style.css" media="screen" title="no title" charset="utf-8">
   </head>
-  <body>
+  <body style="height:100%;width:100%;">
+    <div id="connections"></div>
     <div id="map" style="width: 100%; height: 100%"></div>
-
     <script>
     /**
     * Initializing leaflet map
@@ -31,29 +33,41 @@
     // query log URL
     var query_log = 'https://api.irail.be/logs';
 
-    // getting Json response from iRail api log
-    $.getJSON(
-      {
-        url: query_log,
-        success: function(data)
+    var api_response = [];
+    var connections_count = 0;
+
+    function loadConnections()
+    {
+      // getting Json response from iRail api log
+      $.getJSON(
         {
-          for(var log in data )
+          url: query_log,
+          success: function(data)
           {
-            var query = data[log];
-            if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null)
+            for(var log in data )
             {
-              // information about departureStop & arrivalStop
+              var query = data[log];
+              if(query != null && query.querytype !== null && query.querytype == 'connections' && query.code == null)
+              {
+                connections_count++;
+
+                // departure information
+                var dep_id = query.query.departureStop['@id'];
                 var dep_name = query.query.departureStop.name;
-                var arr_name = query.query.arrivalStop.name;
                 var latFrom = query.query.departureStop.latitude;
                 var longFrom =  query.query.departureStop.longitude;
+
+                // arrival information
+                var arr_id = query.query.arrivalStop['@id'];
+                var arr_name = query.query.arrivalStop.name;
                 var latTo =  query.query.arrivalStop.latitude;
                 var longTo =  query.query.arrivalStop.longitude;
 
-                // objects with Lat and Long information about departure and arrival
+                var dateTime = query.query.dateTime;
+
+                // Lat and Long information of departure and arrival
                 var pointFrom = new L.LatLng(latFrom, longFrom);
                 var pointTo = new L.LatLng(latTo, longTo);
-
                 var pointList = [pointFrom, pointTo];
 
                 var polyline = new L.Polyline(pointList,
@@ -64,27 +78,27 @@
                   smoothFactor: 3
                 });
 
-                // add 'from' marker to map
-                var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name);
-                fromMarker.addTo(map);
+                  // add 'from' marker to map
+                  var fromMarker = new L.marker([latFrom, longFrom]).bindPopup(dep_name + ' at ' +  dateTime + ' to ' + arr_name);
+                  fromMarker.addTo(map);
 
-                // add 'to' marker to map
-                var toMarker = new L.marker([latTo,longTo]).bindPopup(arr_name);
-                toMarker.addTo(map);
+                  // add 'to' marker to map
+                  var toMarker = new L.marker([latTo,longTo]).bindPopup(arr_name);
+                  toMarker.addTo(map);
 
-                // add polyline to map (line between from - to)
-                polyline.addTo(map);
+                  // add polyline to map (line between from - to)
+                  polyline.addTo(map);
+
+                  $("#connections").html(connections_count + ' searches');
+
+                }
+              }
             }
-          }
-        }
-      }
-    );
+          });
 
+    }
 
-
-
-
+    loadConnections();
 	</script>
-
   </body>
 </html>
